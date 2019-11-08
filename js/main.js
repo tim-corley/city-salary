@@ -1,5 +1,5 @@
 const limit = 50;
-const zip = '02132';
+const zip = '02134';
 const lowZip = '01001'
 const highZip = '01101';
 // const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" ORDER BY _id ASC LIMIT ${limit}`;
@@ -39,37 +39,6 @@ fetch(url)
       if (!response.ok) throw Error(response.statusText);
       return response.json();
     })
-    // .then((data) => console.log(data))
-    // .then((data) => console.log(data.result.records))
-    // .then((data) => console.log(data.result.records[0].TITLE))
-    // CREATE ARRAY OF ALL TITLES (FILTERED)
-    // .then((data) => {
-    //   const titleSample = [];
-    //   const records = data.result.records;
-    //   for (let i = 0; i < records.length; i++) {
-    //     if (titleSample.indexOf(records[i].TITLE) === -1) {
-    //       titleSample.push(records[i].TITLE);
-    //     }
-    //   }
-    //   console.log(titleSample);
-    //   return titleSample;
-    // })
-    // FOR EACH EMPLOYEE (Object) IN THE ARRAY
-    // CREATE A NEW OBJECT WITH DESIRED PROPS (i.e. filter out some props)
-    // .then((data) => {
-    //   const records = data.result.records;
-    //   // const props = 'TITLE';
-    //   const props = ['POSTAL', 'TITLE', 'DEPARTMENT_NAME', 'TOTAL EARNINGS'];
-    //   records.forEach((record) => {
-    //     const newObj = Object.keys(record).reduce((object, key) => {
-    //       props.forEach((prop) => {
-    //         if (key === prop) {object[key] = record[key]};
-    //         return object;
-    //       });
-    //     }, {});
-    //     console.log(newObj);
-    //   });
-    // })
 
     // CREATE AN ARRAY OF FILTERED OBJECTS FROM THE DATA
     .then((data) => {
@@ -90,47 +59,35 @@ fetch(url)
       records.forEach((record) => {
         filteredRecords.push(pick(record, ['POSTAL', 'TITLE', 'DEPARTMENT_NAME', 'TOTAL EARNINGS']));
       });
+      // console.log(filteredRecords);
       return filteredRecords;
     })
 
-
-    // console.log(records[0]);
-    // const demoObj = records[0];
-    // const props = ['POSTAL', 'TITLE', 'DEPARTMENT_NAME', 'TOTAL EARNINGS']
-    // const prop = 'NAME';
-    // const newObj = Object.keys(demoObj).reduce((object, key) => {
-    //   if (key !== prop) {object[key] = demoObj[key]}
-    //   return object;
-    // }, {});
-    // console.log(newObj);
-    //   for (let i = 0; i < records.length; i++) {
-    //     allDepts.push(records[i].DEPARTMENT_NAME);
-    //   }
-    //   return allDepts;
-    // })
-    // GET TOP 20 DEPTS (MODE)
     .then((filteredRecords) => {
-      // make a map
-      const map = filteredRecords.reduce(function(acc, curr) {
-        acc[curr] = ++acc[curr] || 1;
-        // console.log(acc);
-        return acc;
-      }, {});
-      // loop through object -> get array of keys/values (depts/count)
-      const counterArr = [];
-      for (const key in map) {
-        if ({}.hasOwnProperty.call(map, key)) {
-          counterArr.push([key, map[key]]);
-        }
+      const arrObjs = [];
+      function DeptObj(name, sumEarnings) {
+        this.name = name;
+        this.sumEarnings = sumEarnings;
+        this.count = 0;
       }
-      // sort array by values
-      counterArr.sort(function(a, b) {
-        return b[1] - a[1];
-      });
-      // slice & map over top 20 highest, return value
-      // console.log(counterArr.slice(0, 20) // value & count
-      console.log(counterArr.slice(0, 20).map(function(e) {
-        return e[0]; // just values
-      }));
+      // intialize array with an obj
+      const test = new DeptObj(filteredRecords[0].DEPARTMENT_NAME, filteredRecords[0]['TOTAL EARNINGS']);
+      test.count += 1;
+      arrObjs.push(test);
+      // IF ARRAY IS NOT EMPTY, ADD OBJECTS
+      if (arrObjs.length !== 0) {
+        filteredRecords.forEach((record) => {
+          arrObjs.forEach((obj) => {
+            const isThere = obj.name.includes(record.DEPARTMENT_NAME);
+            console.log(isThere);
+          });
+        });
+      } else {
+        const test2 = new DeptObj(record.DEPARTMENT_NAME, record['TOTAL EARNINGS']);
+        test2.count += 1;
+        arrObjs.push(test2);
+        console.log('created new object');
+      }
+      console.log(arrObjs);
     })
     .catch(console.error);
