@@ -60,6 +60,10 @@ fetch(url)
         filteredRecords.push(pick(record, ['POSTAL', 'TITLE', 'DEPARTMENT_NAME', 'TOTAL EARNINGS']));
       });
       // console.log(filteredRecords);
+      // const testType = filteredRecords[0]['TOTAL EARNINGS'];
+      // const parse = parseFloat(testType.replace(',', ''));
+      // console.log(parse);
+      // console.log(typeof parse);
       return filteredRecords;
     })
 
@@ -67,27 +71,88 @@ fetch(url)
       const arrObjs = [];
       function DeptObj(name, sumEarnings) {
         this.name = name;
-        this.sumEarnings = sumEarnings;
+        this.sumEarnings = 0;
         this.count = 0;
       }
-      // intialize array with an obj
-      const test = new DeptObj(filteredRecords[0].DEPARTMENT_NAME, filteredRecords[0]['TOTAL EARNINGS']);
-      test.count += 1;
-      arrObjs.push(test);
-      // IF ARRAY IS NOT EMPTY, ADD OBJECTS
-      if (arrObjs.length !== 0) {
-        filteredRecords.forEach((record) => {
-          arrObjs.forEach((obj) => {
-            const isThere = obj.name.includes(record.DEPARTMENT_NAME);
-            console.log(isThere);
-          });
-        });
-      } else {
-        const test2 = new DeptObj(record.DEPARTMENT_NAME, record['TOTAL EARNINGS']);
-        test2.count += 1;
-        arrObjs.push(test2);
-        console.log('created new object');
+      const allDepts = [];
+      const records = filteredRecords;
+      for (let i = 0; i < records.length; i++) {
+        allDepts.push(records[i].DEPARTMENT_NAME);
       }
-      console.log(arrObjs);
+      // get filtered array of dept names
+      const filterTest = allDepts.filter((dept, index) => allDepts.indexOf(dept) === index);
+      // console.log(filterTest);
+      // for each item in arr, create new object
+      const obj = Object.fromEntries(
+          filterTest.map((dept) => [dept, {
+            name: dept,
+            sumEarnings: 0,
+            count: 0,
+          }])
+      );
+      console.log(obj);
+      const deptArr = Object.keys(obj).map((i) => obj[i]);
+
+      filteredRecords.forEach((record) => {
+        deptArr.forEach((obj) => {
+          if (obj.name.includes(record.DEPARTMENT_NAME)) {
+            obj.count += 1;
+            const earnings = record['TOTAL EARNINGS'];
+            const earningsNum = parseFloat(earnings.replace(',', ''));
+            obj.sumEarnings += earningsNum;
+          }
+        });
+      });
+      console.log(deptArr);
     })
+    // .then((allDepts) => {
+    //   const filterTest = allDepts.filter((dept, index) => allDepts.indexOf(dept) === index);
+    //   console.log(filterTest);
+    //   // // create an initial array of objs with unique names
+    //   // const map = allDepts.reduce(function(acc, curr) {
+    //   //   acc[curr] = ++acc[curr] || 1;
+    //   //   // console.log(acc);
+    //   //   return acc;
+    //   // }, {});
+    //   // console.log(map);
+    //   // const counterArr = [];
+    //   // for (const key in map) {
+    //   //   if ({}.hasOwnProperty.call(map, key)) {
+    //   //     counterArr.push([key, map[key]]);
+    //   //     console.log(counterArr);
+    //   //   }
+    //   // }
+    //   // // sort array by values
+    //   // counterArr.sort(function(a, b) {
+    //   //   return b[1] - a[1];
+    //   // });
+    // })
+    //   // intialize array with an obj
+    //   const earnings = filteredRecords[0]['TOTAL EARNINGS'];
+    //   const earningsNum1 = parseFloat(earnings.replace(',', ''));
+    //   const test = new DeptObj(filteredRecords[0].DEPARTMENT_NAME, earningsNum1);
+    //   test.count += 1;
+    //   arrObjs.push(test);
+    //   // IF ARRAY IS NOT EMPTY, ADD OBJECTS
+    //   if (arrObjs.length !== 0) {
+    //     filteredRecords.forEach((record) => {
+    //       arrObjs.forEach((obj) => {
+    //         if (obj.name.includes(record.DEPARTMENT_NAME)) {
+    //           test.count += 1;
+    //           const earnings2 = record['TOTAL EARNINGS'];
+    //           const earningsNum2 = parseFloat(earnings2.replace(',', ''));
+    //           test.sumEarnings += earningsNum2;
+    //         } else {
+    //           console.log('working on it..');
+    //         }
+    //       });
+    //     });
+    //   } else {
+    //     const test2 = new DeptObj(record.DEPARTMENT_NAME, record['TOTAL EARNINGS']);
+    //     test2.count += 1;
+    //     arrObjs.push(test2);
+    //     console.log('created new object');
+    //   }
+    //   console.log(arrObjs);
+    // })
     .catch(console.error);
