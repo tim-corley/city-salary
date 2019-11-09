@@ -1,10 +1,35 @@
-const limit = 50;
-const zip = '02134';
-const lowZip = '01001'
-const highZip = '01101';
+const limit = 10;
+const lowZip = '01001';
+const highZip = '01011';
 // const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" ORDER BY _id ASC LIMIT ${limit}`;
 // const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" WHERE _id = '2' LIMIT ${limit}`;
-const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" WHERE _full_text @@ to_tsquery('${zip}') LIMIT ${limit}`;
+// const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" WHERE _full_text @@ to_tsquery('${zip}') LIMIT ${limit}`;
+
+
+// pass in zip codes as strings
+// check it args = strings, if Numbers, convert
+function createPaddedZipArr(zipStart, zipEnd) {
+  const zipArr = [];
+  for (let i = Number(zipStart); i <= Number(zipEnd); i++) {
+    const paddedZip = i.toString().padStart(5, '0');
+    zipArr.push(paddedZip);
+  }
+  return zipArr;
+}
+
+function createZipURLArr(zipStart, zipEndp) {
+  urlArr = [];
+  const zipArr = createPaddedZipArr(zipStart, zipEndp);
+  zipArr.forEach((zip) => {
+    const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" WHERE _full_text @@ to_tsquery('${zip}') LIMIT ${limit}`;
+    urlArr.push(url);
+  });
+  return urlArr;
+};
+
+const urlArray = createZipURLArr(lowZip, highZip);
+console.log(urlArray.length);
+
 
 // ZIP CODE LOOP -> get sample of TITLESs
 // loop through each digit between 01001 -> 02791
@@ -55,44 +80,38 @@ fetch(url)
         });
         return picked;
       };
-
+      // create an array containing objects w/ desired properties
       records.forEach((record) => {
         filteredRecords.push(pick(record, ['POSTAL', 'TITLE', 'DEPARTMENT_NAME', 'TOTAL EARNINGS']));
       });
-      // console.log(filteredRecords);
-      // const testType = filteredRecords[0]['TOTAL EARNINGS'];
-      // const parse = parseFloat(testType.replace(',', ''));
-      // console.log(parse);
-      // console.log(typeof parse);
       return filteredRecords;
     })
 
     .then((filteredRecords) => {
-      const arrObjs = [];
-      function DeptObj(name, sumEarnings) {
-        this.name = name;
-        this.sumEarnings = 0;
-        this.count = 0;
-      }
       const allDepts = [];
       const records = filteredRecords;
       for (let i = 0; i < records.length; i++) {
         allDepts.push(records[i].DEPARTMENT_NAME);
       }
-      // get filtered array of dept names
-      const filterTest = allDepts.filter((dept, index) => allDepts.indexOf(dept) === index);
-      // console.log(filterTest);
-      // for each item in arr, create new object
+      // get filtered array of dept names (i.e. unique)
+      const filteredDepts = allDepts.filter((dept, index) => allDepts.indexOf(dept) === index);
+
+      // for each item in arr, create new object (object of objects)
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries
+      // https://stackoverflow.com/questions/42974735/create-object-from-array
       const obj = Object.fromEntries(
-          filterTest.map((dept) => [dept, {
+          filteredDepts.map((dept) => [dept, {
             name: dept,
             sumEarnings: 0,
             count: 0,
             avrSal: 0,
           }])
       );
+      // create array of objects
+      // https://medium.com/chrisburgin/javascript-converting-an-object-to-an-array-94b030a1604c
       const deptArr = Object.keys(obj).map((i) => obj[i]);
 
+      // when dept name matches, add count & earnings to the obj
       filteredRecords.forEach((record) => {
         deptArr.forEach((obj) => {
           if (obj.name.includes(record.DEPARTMENT_NAME)) {
@@ -104,56 +123,6 @@ fetch(url)
           }
         });
       });
-      console.log(deptArr);
+      // console.log(deptArr);
     })
-    // .then((allDepts) => {
-    //   const filterTest = allDepts.filter((dept, index) => allDepts.indexOf(dept) === index);
-    //   console.log(filterTest);
-    //   // // create an initial array of objs with unique names
-    //   // const map = allDepts.reduce(function(acc, curr) {
-    //   //   acc[curr] = ++acc[curr] || 1;
-    //   //   // console.log(acc);
-    //   //   return acc;
-    //   // }, {});
-    //   // console.log(map);
-    //   // const counterArr = [];
-    //   // for (const key in map) {
-    //   //   if ({}.hasOwnProperty.call(map, key)) {
-    //   //     counterArr.push([key, map[key]]);
-    //   //     console.log(counterArr);
-    //   //   }
-    //   // }
-    //   // // sort array by values
-    //   // counterArr.sort(function(a, b) {
-    //   //   return b[1] - a[1];
-    //   // });
-    // })
-    //   // intialize array with an obj
-    //   const earnings = filteredRecords[0]['TOTAL EARNINGS'];
-    //   const earningsNum1 = parseFloat(earnings.replace(',', ''));
-    //   const test = new DeptObj(filteredRecords[0].DEPARTMENT_NAME, earningsNum1);
-    //   test.count += 1;
-    //   arrObjs.push(test);
-    //   // IF ARRAY IS NOT EMPTY, ADD OBJECTS
-    //   if (arrObjs.length !== 0) {
-    //     filteredRecords.forEach((record) => {
-    //       arrObjs.forEach((obj) => {
-    //         if (obj.name.includes(record.DEPARTMENT_NAME)) {
-    //           test.count += 1;
-    //           const earnings2 = record['TOTAL EARNINGS'];
-    //           const earningsNum2 = parseFloat(earnings2.replace(',', ''));
-    //           test.sumEarnings += earningsNum2;
-    //         } else {
-    //           console.log('working on it..');
-    //         }
-    //       });
-    //     });
-    //   } else {
-    //     const test2 = new DeptObj(record.DEPARTMENT_NAME, record['TOTAL EARNINGS']);
-    //     test2.count += 1;
-    //     arrObjs.push(test2);
-    //     console.log('created new object');
-    //   }
-    //   console.log(arrObjs);
-    // })
     .catch(console.error);
