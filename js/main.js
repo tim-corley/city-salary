@@ -1,13 +1,8 @@
-const limit = 250;
+const limit = 500;
 const lowZip = '01001';
-const highZip = '01501';
-// const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" ORDER BY _id ASC LIMIT ${limit}`;
-// const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" WHERE _id = '2' LIMIT ${limit}`;
-// const url = `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" WHERE _full_text @@ to_tsquery('${zip}') LIMIT ${limit}`;
+const highZip = '02791';
 
-
-// pass in zip codes as strings
-// check it args = strings, if Numbers, convert
+// TODO: check it args = strings, if Numbers, convert
 function createPaddedZipArr(zipStart, zipEnd) {
   const zipArr = [];
   for (let i = Number(zipStart); i <= Number(zipEnd); i++) {
@@ -30,33 +25,11 @@ function createPaddedZipArr(zipStart, zipEnd) {
 // const urlArray = createZipURLArr(lowZip, highZip);
 // console.log(urlArray.length);
 
-
-// ZIP CODE LOOP -> get sample of TITLESs
+// ZIP CODE LOOP -> get sample of DEPTS
 // loop through each digit between 01001 -> 02791
 // make a call to:
 // `https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" WHERE _full_text @@ to_tsquery('${zip}') LIMIT ${limit}`
-// loop through each result - store TITLE if not already stored/saved to an array
-// for (let i = lowZip; i <= highZip; i++) {
-//   console.log('test');
-// }
 
-
-// TITLE OPTIONS
-// consolidate / clean-up all titles into a few broad categories
-// present options as a dropdown
-
-// SELECTION / SEARCH
-// convert keywords to search terms ("Police Officer" === "police")
-// plug search term into api call
-
-// CALCULATE RESULTS & DISPLAY
-// 1) location - % of workers by zip
-// 2) average pay
-
-
-// window.addEventListener('load', (event) => {
-//   // on load loop through zip codes
-// })
 const zipCodes = createPaddedZipArr(lowZip, highZip);
 for (let i = 0; i < zipCodes.length; i++) {
   fetch(`https://data.boston.gov/api/3/action/datastore_search_sql?sql=SELECT * from "31358fd1-849a-48e0-8285-e813f6efbdf1" WHERE _full_text @@ to_tsquery('${zipCodes[i]}') LIMIT ${limit}`)
@@ -65,13 +38,6 @@ for (let i = 0; i < zipCodes.length; i++) {
         if (!response.ok) throw Error(response.statusText);
         return response.json();
       })
-      // .then((allData) => {
-      //   if (allData.result.records.length === 0) {
-      //     throw Error('NO DATA FOR THIS ZIP CODE.');
-      //   } else if (allData.result.records.length > 0) {
-      //     return allData;
-      //   }
-      // })
       // CREATE AN ARRAY OF FILTERED OBJECTS FROM THE DATA
       .then((data) => {
         const records = data.result.records; // array of objects
@@ -93,6 +59,7 @@ for (let i = 0; i < zipCodes.length; i++) {
         });
         return filteredRecords;
       })
+      // CREATE ARRAY OF CUSTOM OBJECTS W/ DESIRED PROPS/VALS
       .then((filteredRecords) => {
         const allDepts = [];
         const records = filteredRecords;
@@ -112,7 +79,7 @@ for (let i = 0; i < zipCodes.length; i++) {
               avrSal: 0,
             }])
         );
-        // create array of objects
+        // create array of the objects
         // https://medium.com/chrisburgin/javascript-converting-an-object-to-an-array-94b030a1604c
         const deptArr = Object.keys(obj).map((i) => obj[i]);
         // when dept name matches, add count & earnings to the obj
