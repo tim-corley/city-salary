@@ -88,9 +88,9 @@ fetch(url)
             name: dept,
             sumEarnings: 0,
             count: 0,
+            avrSal: 0,
           }])
       );
-      console.log(obj);
       const deptArr = Object.keys(obj).map((i) => obj[i]);
 
       filteredRecords.forEach((record) => {
@@ -100,6 +100,7 @@ fetch(url)
             const earnings = record['TOTAL EARNINGS'];
             const earningsNum = parseFloat(earnings.replace(',', ''));
             obj.sumEarnings += earningsNum;
+            obj.avrSal = (obj.sumEarnings / obj.count);
           }
         });
       });
