@@ -5,22 +5,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <link rel="stylesheet" type="text/css" href="node_modules/bulma/css/bulma.css">
   <title>🔍💰</title>
 </head>
 
 <body>
-
-  <header class="navbar">
-    <h1>BOSTON CITY SALARY DATA</h1>
-  </header>
-  <section></section>
-  <main>
-    <h3>DEPARTMANTS:</h3>
-    <div id="output"></div>
-
-  </main>
-
-  <!-- <script src="js/main.js"></script> -->
+  <div class="container is-fluid">
+    <section class="hero is-dark is-bold">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            CITY OF BOSTON | SALARY ANALYSIS
+          </h1>
+          <h2 class="subtitle">
+            A breakdown of avarage (yearly) salary by department. Data sourced from: <span class="is-uppercase has-text-weight-semibold"><a href="https://data.boston.gov/dataset/employee-earnings-report/resource/31358fd1-849a-48e0-8285-e813f6efbdf1">City of Boston Employee Earnings Report</a></span>
+          </h2>
+        </div>
+      </div>
+    </section>
+    <main>
+      <table class="table is-striped" width="800">
+        <thead>
+          <tr>
+            <th scope="col">Department Name</th>
+            <th scope="col">Average Employee Salary</th>
+            <th scope="col">Employee Count</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- DATA GOES HERE -->
+        </tbody>
+      </table>
+    </main>
+  </div>
   <script src="js/main.js"></script>
 </body>
 

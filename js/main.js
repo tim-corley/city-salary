@@ -86,12 +86,11 @@ Promise.all(urls.map((url) =>
     // ADD CONTENT TO DOM
     .then((sortedDeptArr) => {
       let html = '';
-      const listContainer = document.getElementById('output');
+      const tableContainer = document.getElementById('table-body');
       for (let i = 0; i < sortedDeptArr.length; i++) {
-        html +=`<li>${sortedDeptArr[i].name} (count: ${sortedDeptArr[i].count})</li>
-        <ul><li>Average Salary: ${sortedDeptArr[i].avrSal}</li></ul>`;
+        html += `<tr><td>${sortedDeptArr[i].name}</td><td>${sortedDeptArr[i].avrSal}</td><td>${sortedDeptArr[i].count}</td></tr>`;
       }
-      listContainer.innerHTML = html;
+      tableContainer.innerHTML = html;
     });
 
 // HELPERS
