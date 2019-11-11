@@ -1,5 +1,5 @@
-const limit = 5; // 500
-const lowZip = '02401'; // 01001
+const limit = 275; // 500
+const lowZip = '01001'; // 01001
 const highZip = '02791'; // 02791
 const wantedProps = ['POSTAL', 'TITLE', 'DEPARTMENT_NAME', 'TOTAL EARNINGS'];
 
@@ -72,10 +72,13 @@ Promise.all(urls.map((url) =>
           if (obj.name.includes(record.DEPARTMENT_NAME)) {
             const earnings = record['TOTAL EARNINGS'];
             const earningsNum = parseFloat(earnings.replace(',', ''));
-            const avrSalStr = currencyFormat((obj.sumEarnings / obj.count));
             obj.count += 1;
             obj.sumEarnings += earningsNum;
-            obj.avrSal = avrSalStr;
+            if (obj.count === 1) {
+              obj.avrSal = currencyFormat(obj.sumEarnings);
+            } else {
+              obj.avrSal = currencyFormat((obj.sumEarnings / obj.count));
+            }
           }
         });
       });
