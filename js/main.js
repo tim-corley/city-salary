@@ -1,5 +1,5 @@
-const limit = 200; // 500
-const lowZip = '01001'; // 01001
+const limit = 5; // 500
+const lowZip = '02401'; // 01001
 const highZip = '02791'; // 02791
 const wantedProps = ['POSTAL', 'TITLE', 'DEPARTMENT_NAME', 'TOTAL EARNINGS'];
 
@@ -70,16 +70,17 @@ Promise.all(urls.map((url) =>
       filteredRecords.forEach((record) => {
         deptArr.forEach((obj) => {
           if (obj.name.includes(record.DEPARTMENT_NAME)) {
-            obj.count += 1;
             const earnings = record['TOTAL EARNINGS'];
             const earningsNum = parseFloat(earnings.replace(',', ''));
+            const avrSalStr = currencyFormat((obj.sumEarnings / obj.count));
+            obj.count += 1;
             obj.sumEarnings += earningsNum;
-            obj.avrSal = (obj.sumEarnings / obj.count);
+            obj.avrSal = avrSalStr;
           }
         });
       });
       const sortedDeptArr = deptArr.sort((a, b) => (a.count < b.count) ? 1 : -1);
-      console.log(sortedDeptArr);
+      // console.log(sortedDeptArr);
       return sortedDeptArr;
     })
     // ADD CONTENT TO DOM
@@ -87,8 +88,8 @@ Promise.all(urls.map((url) =>
       let html = '';
       const listContainer = document.getElementById('output');
       for (let i = 0; i < sortedDeptArr.length; i++) {
-        html +=`<li>${sortedDeptArr[i].name}</li>
-        <ul><li>${sortedDeptArr[i].avrSal}</li></ul>`;
+        html +=`<li>${sortedDeptArr[i].name} (count: ${sortedDeptArr[i].count})</li>
+        <ul><li>Average Salary: ${sortedDeptArr[i].avrSal}</li></ul>`;
       }
       listContainer.innerHTML = html;
     });
@@ -111,3 +112,8 @@ function propsPicker(obj, props) {
   });
   return picked;
 };
+
+// https://blog.abelotech.com/posts/number-currency-formatting-javascript/
+function currencyFormat(num) {
+  return '$' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+}
