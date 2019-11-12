@@ -5,7 +5,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/tim-corley/city-salary">
     <img src="img/boston-city-seal.svg" alt="city seal logo" width="120" height="120">
   </a>
 
@@ -81,5 +81,5 @@ Tim Corley | [@tcor215](https://twitter.com/tcor215) |  contact@tim-corley.com
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=flat-square
+[issues-shield]: https://img.shields.io/github/issues/tim-corley/city-salary?color=red&style=for-the-badge
 [issues-url]: https://github.com/tim-corley/city-salary/issues
