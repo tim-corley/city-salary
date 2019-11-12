@@ -1,7 +1,18 @@
-const limit = 275; // 500
+// const redis = require('redis');
+
+const limit = 250; // 500
 const lowZip = '01001'; // 01001
 const highZip = '02791'; // 02791
 const wantedProps = ['POSTAL', 'TITLE', 'DEPARTMENT_NAME', 'TOTAL EARNINGS'];
+const errorMsg = '<article class="message is-danger"><div class="message-body"><p>Sorry, there was an error retreiving the data. Please try again by refreshing the page. If problem persists, create a new <a href="https://github.com/tim-corley/city-salary/issues">GitHub issue</a> for the project.</p></div></article>';
+
+// // create and connect redis client to local instance.
+// const client = redis.createClient();
+
+// // Print redis errors to the console
+// client.on('error', (err) => {
+//   console.error(`Error: ${err}`);
+// });
 
 // CREATE ARRAY OF ALL URLS TO BE CALLED
 const urls = [];
@@ -28,6 +39,9 @@ Promise.all(urls.map((url) =>
       data.forEach((d) => {
         if (d.result.records.length > 0) {
           rawDataArr.push(d.result.records);
+        } else if (d.result.records.length === undefined || d.result.records.length === 0) {
+          const error = document.getElementById('error-container');
+          error.innerHTML = errorMsg;
         }
       });
       return rawDataArr;
@@ -40,8 +54,7 @@ Promise.all(urls.map((url) =>
           filteredRecords.push(propsPicker(item, wantedProps));
         });
       });
-      // console.log(filteredRecords);
-      return filteredRecords; // array of all filtered objects
+      return filteredRecords;
     })
     // GET ALL DEPTS NAMES -> REMOVE DUPLICATES -> CREATE NEW OBJ FOR EACH DEPT
     .then((filteredRecords) => {
@@ -50,9 +63,9 @@ Promise.all(urls.map((url) =>
       for (let i = 0; i < records.length; i++) {
         allDepts.push(records[i].DEPARTMENT_NAME);
       }
-      // get filtered array of dept names (i.e. unique)
+      // create filtered array of dept names (i.e. unique)
       const filteredDepts = allDepts.filter((dept, index) => allDepts.indexOf(dept) === index);
-      // for each item in arr, create new object (object of objects)
+      // for each item in arr, create new object (creates an object of objects)
       // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries
       // https://stackoverflow.com/questions/42974735/create-object-from-array
       const obj = Object.fromEntries(
@@ -82,18 +95,18 @@ Promise.all(urls.map((url) =>
           }
         });
       });
+      // SORT BY COUNT
       const sortedDeptArr = deptArr.sort((a, b) => (a.count < b.count) ? 1 : -1);
-      // console.log(sortedDeptArr);
       return sortedDeptArr;
     })
-    // ADD CONTENT TO DOM
+    // ADD CONTENT TO DOM / TABLE
     .then((sortedDeptArr) => {
-      let html = '';
+      let row = '';
       const tableContainer = document.getElementById('table-body');
       for (let i = 0; i < sortedDeptArr.length; i++) {
-        html += `<tr><td>${sortedDeptArr[i].name}</td><td>${sortedDeptArr[i].avrSal}</td><td>${sortedDeptArr[i].count}</td></tr>`;
+        row += `<tr><td>${sortedDeptArr[i].name}</td><td>${sortedDeptArr[i].avrSal}</td><td>${sortedDeptArr[i].count}</td></tr>`;
       }
-      tableContainer.innerHTML = html;
+      tableContainer.innerHTML = row;
     });
 
 // HELPERS

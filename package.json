@@ -8,16 +8,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "tbd"
+    "url": "https://github.com/tim-corley/city-salary.git"
   },
   "keywords": [
     "boston",
     "data"
   ],
-  "author": "tim corley",
+  "author": "Tim Corley",
   "license": "MIT",
   "devDependencies": {
     "browser-sync": "^2.26.7",
     "bulma": "^0.8.0"
+  },
+  "dependencies": {
+    "redis": "^2.8.0"
   }
 }
