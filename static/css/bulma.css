@@ -4211,6 +4211,7 @@ a.tag:hover {
   font-size: 1.25rem;
   font-weight: 400;
   line-height: 1.25;
+  padding-top: 1rem;
 }
 
 .subtitle strong {
