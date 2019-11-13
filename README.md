@@ -6,7 +6,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/tim-corley/city-salary">
-    <img src="img/boston-city-seal.svg" alt="city seal logo" width="120" height="120">
+    <img src="static/img/boston-city-seal.svg" alt="city seal logo" width="120" height="120">
   </a>
 
   <h3 align="center">CITY OF BOSTON</h3>
@@ -15,7 +15,7 @@
     Employee Salary Analysis
     <br />
     <br />
-    <a href="https://github.com/tim-corley/city-salary"><strong>Go To The Site »</strong></a>
+    <a href="https://analyze-boston.appspot.com/"><strong>Go To The Site »</strong></a>
     <br />
   </p>
 </p>
@@ -33,21 +33,23 @@
 <!-- ABOUT THE PROJECT -->
 ## About
 
-![product-screenshot](img/ff-browser-screenshot.png)
+[![product-screenshot](static/img/ff-browser-screenshot.png)](https://analyze-boston.appspot.com/)
 
 The goal of this project is to get familiar and comfortable with retrieving, manipulating, and presenting data from a 3rd party source. Specific areas of focus during this project:
-* API queries via SQL statement
-* Fetch API & Promises
+* API queries containing SQL statements
+* Using Fetch API & Promises
 * Traversing JSON data
-* Creating objects
+* Creating & working with objects
 * Various array methods
 * DOM manipulation
+* Deploy / Host via GCP's App Engine
 
 ### Built With
 
 * Data Source: [Analyze Boston](https://data.boston.gov/dataset/employee-earnings-report)
 * CSS Framework: [Bulma](https://bulma.io/)
 * Google Fonts: [Nanum Gothic](https://fonts.google.com/specimen/Nanum+Gothic?selection.family=Nanum+Gothic)
+* Hosting: [Google App Engine](https://cloud.google.com/appengine/)
 
 ### Installation
 
