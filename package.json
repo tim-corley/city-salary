@@ -20,7 +20,7 @@
     "browser-sync": "^2.26.7"
   },
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "node-fetch": "^2.6.0",
     "redis": "^2.8.0",
     "bulma": "^0.8.0"
